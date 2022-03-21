@@ -10,7 +10,7 @@ from pathlib2 import Path
 
 def check_dir(path, check=False):
     if check:
-        assert os.path.exists(path), '{} does not exist!'.format(path)
+        assert os.path.exists(path), f'{path} does not exist!'
     else:
         if not os.path.exists(path):
             os.makedirs(path)
@@ -18,25 +18,25 @@ def check_dir(path, check=False):
 
 def download(source, target, force_clear=False):
     if force_clear and os.path.exists(target):
-        print('Removing {}...'.format(target))
+        print(f'Removing {target}...')
         shutil.rmtree(target)
 
     check_dir(target)
-    
+
     targt_file = str(Path(target).joinpath('data.zip'))
     if os.path.exists(targt_file) and not force_clear:
         print('data already exists, skipping download')
         return
 
     if source.startswith('http'):
-        print("Downloading from {} to {}".format(source, target))
-        wget.download(source, targt_file)  
+        print(f"Downloading from {source} to {target}")
+        wget.download(source, targt_file)
         print("Done!")
     else:
-        print("Copying from {} to {}".format(source, target))
+        print(f"Copying from {source} to {target}")
         shutil.copyfile(source, targt_file)
 
-    print('Unzipping {}'.format(targt_file))
+    print(f'Unzipping {targt_file}')
     zipr = zipfile.ZipFile(targt_file)
     zipr.extractall(target)
     zipr.close()
@@ -44,27 +44,26 @@ def download(source, target, force_clear=False):
 def process_image(path, image_size=160):
     img_raw = tf.io.read_file(path)
     img_tensor = tf.image.decode_jpeg(img_raw, channels=3)
-    img_final = tf.image.resize(img_tensor, [image_size, image_size]) / 255
-    return img_final
+    return tf.image.resize(img_tensor, [image_size, image_size]) / 255
 
 def walk_images(base_path, image_size=160):
     images = []
-    print('Scanning {}'.format(base_path))
+    print(f'Scanning {base_path}')
     # find subdirectories in base path
     # (they should be the labels)
     labels = []
     for (_, dirs, _) in os.walk(base_path):
-        print('Found {}'.format(dirs))
+        print(f'Found {dirs}')
         labels = dirs
         break
 
     for d in labels:
         path = os.path.join(base_path, d)
-        print('Processing {}'.format(path))
+        print(f'Processing {path}')
         # only care about files in directory
         for item in os.listdir(path):
             if not item.lower().endswith('.jpg'):
-                print('skipping {}'.format(item))
+                print(f'skipping {item}')
                 continue
 
             image = os.path.join(path, item)
@@ -89,14 +88,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args)
 
-    print('Using TensorFlow v.{}'.format(tf.__version__))
+    print(f'Using TensorFlow v.{tf.__version__}')
 
     base_path = Path(args.base_path).resolve(strict=False)
-    print('Base Path:  {}'.format(base_path))
+    print(f'Base Path:  {base_path}')
     data_path = base_path.joinpath(args.data).resolve(strict=False)
-    print('Train Path: {}'.format(data_path))
+    print(f'Train Path: {data_path}')
     target_path = Path(base_path).resolve(strict=False).joinpath(args.target)
-    print('Train File: {}'.format(target_path))
+    print(f'Train File: {target_path}')
     zip_path = args.zipfile
 
     print('Acquiring data...')
@@ -109,7 +108,7 @@ if __name__ == "__main__":
         images = walk_images(str(data_path), args.img_size)
 
         # save file
-        print('writing dataset to {}'.format(target_path))
+        print(f'writing dataset to {target_path}')
         with open(str(target_path), 'w+') as f:
             f.write('\n'.join(images))
 

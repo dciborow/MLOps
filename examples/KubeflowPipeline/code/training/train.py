@@ -22,7 +22,7 @@ def info(msg, char = "#", width = 75):
 
 def check_dir(path, check=False):
     if check:
-        assert os.path.exists(path), '{} does not exist!'.format(path)
+        assert os.path.exists(path), f'{path} does not exist!'
     else:
         if not os.path.exists(path):
             os.makedirs(path)
@@ -41,26 +41,26 @@ def load_dataset(base_path, dataset, split=[8, 1, 1]):
     # find labels - parent folder names
     labels = {}
     for (_, dirs, _) in os.walk(base_path):
-        print('found {}'.format(dirs))
+        print(f'found {dirs}')
         labels = { k: v for (v, k) in enumerate(dirs) }
-        print('using {}'.format(labels))
+        print(f'using {labels}')
         break
-        
+
     # load all files along with idx label
-    print('loading dataset from {}'.format(dataset))
+    print(f'loading dataset from {dataset}')
     with open(dataset, 'r') as d:
         data = [(str(Path(f.strip()).absolute()), labels[Path(f.strip()).parent.name]) for f in d.readlines()]
 
     print('dataset size: {}\nsuffling data...'.format(len(data)))
-    
+
     # shuffle data
     shuffle(data)
-    
+
     print('splitting data...')
     # split data
     train_idx = int(len(data) * splits[0])
     eval_idx = int(len(data) * splits[1])
-    
+
     return data[:train_idx], \
             data[train_idx:train_idx + eval_idx], \
             data[train_idx + eval_idx:], \
@@ -131,7 +131,7 @@ def run(data_path, image_size=160, epochs=10, batch_size=32, learning_rate=0.000
     
 
 def generate_hash(file, key):
-    print('Generating hash for {}'.format(file))
+    print(f'Generating hash for {file}')
     m = hmac.new(str.encode(key), digestmod=hashlib.sha256)
     BUF_SIZE = 65536
     with open(str(file), 'rb') as f:
@@ -155,8 +155,8 @@ if __name__ == "__main__":
     parser.add_argument('-f', '--dataset', help='cleaned data listing')
     args = parser.parse_args()
 
-    info('Using TensorFlow v.{}'.format(tf.__version__))
-    
+    info(f'Using TensorFlow v.{tf.__version__}')
+
     data_path = Path(args.base_path).joinpath(args.data).resolve(strict=False)
     target_path = Path(args.base_path).resolve(strict=False).joinpath(args.outputs)
     dataset = Path(args.base_path).joinpath(args.dataset)
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     dataset_signature = generate_hash(dataset, 'kf_pipeline')
     # printing out args for posterity
     for i in args:
-        print('{} => {}'.format(i, args[i]))
+        print(f'{i} => {args[i]}')
 
     model_signature = run(**args)
 
@@ -188,6 +188,6 @@ if __name__ == "__main__":
     with open(str(params), 'w') as f:
         json.dump(args, f)
 
-    print(' Saved to {}'.format(str(params)))
+    print(f' Saved to {str(params)}')
 
     # python train.py -d train -e 3 -b 32 -l 0.0001 -o model -f train.txt

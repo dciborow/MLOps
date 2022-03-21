@@ -55,9 +55,9 @@ if __name__ == "__main__":
     parser.add_argument('-r', '--resource_group', help='resource_group')
     parser.add_argument('-w', '--workspace', help='workspace')
     args = parser.parse_args()
-    
-    print('Azure ML SDK Version: {}'.format(azureml.core.VERSION))
-    args.model = 'model/' + args.model
+
+    print(f'Azure ML SDK Version: {azureml.core.VERSION}')
+    args.model = f'model/{args.model}'
     model_path = str(Path(args.base_path).resolve(strict=False).joinpath(args.model).resolve(strict=False))
     params_path = str(Path(args.base_path).resolve(strict=False).joinpath('params.json').resolve(strict=False))
     rgs = {
@@ -74,16 +74,16 @@ if __name__ == "__main__":
     # printing out args for posterity
     for i in rgs:
         if i == 'service_principal_password':
-            print('{} => **********'.format(i))
+            print(f'{i} => **********')
         else:
-            print('{} => {}'.format(i, rgs[i]))
+            print(f'{i} => {rgs[i]}')
 
-    with(open(str(params_path), 'r')) as f:
+    with open(params_path, 'r') as f:
         tags = json.load(f)
 
     print('\n\nUsing the following tags:')
     for tag in tags:
-        print('{} => {}'.format(tag, tags[tag]))
+        print(f'{tag} => {tags[tag]}')
 
     rgs['tags'] = tags
 

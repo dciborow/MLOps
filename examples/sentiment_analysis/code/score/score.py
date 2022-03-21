@@ -16,11 +16,9 @@ def init():
 def run(data):
     try:
         result =  model.predict(data)
-        output = json.dumps({'sentiment':str(result[0]),
+        return json.dumps({'sentiment':str(result[0]),
                              'likelihood':str(result[2])
                             }
                            )
-        return output
     except Exception as e:
-        error = str(e)
-        return error
+        return str(e)
