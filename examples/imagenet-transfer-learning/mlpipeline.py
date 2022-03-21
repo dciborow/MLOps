@@ -2,6 +2,7 @@
 """This training pipeline leverages Azure ML Pipelines to
    retrain and store a mobilenet model"""
 
+
 from azureml.core import Workspace, Datastore
 from azureml.core.compute import AmlCompute, DataFactoryCompute
 from azureml.core.runconfig import CondaDependencies, RunConfiguration
@@ -90,7 +91,7 @@ pipeline.validate()
 mlpipeline = pipeline.publish(name="Transfer Learning - Training Pipeline",
                               description="Retrain a mobilenet.imagenet model.")
 
-print("Pipeline Published ID:"+mlpipeline.id)
+print(f"Pipeline Published ID:{mlpipeline.id}")
 
 mlpipeline.submit(ws, "sodacanclassifier",
                   pipeline_parameters={"training_dataset":DataPath(datastore=source_ds,

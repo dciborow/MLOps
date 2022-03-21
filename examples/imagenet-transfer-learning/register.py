@@ -20,12 +20,12 @@ if __name__ == '__main__':
     )
 
     args,unparsed = parser.parse_known_args()
-    print('dataset is '+args.dataset_name)
-    modelName = 'mn.'+args.dataset_name
-    
+    print(f'dataset is {args.dataset_name}')
+    modelName = f'mn.{args.dataset_name}'
+
     run = Run.get_context()
     ws = run.experiment.workspace
-    
+
     tags = {
     "runId":str(run.id),
     "trainingDataSet":args.dataset_name

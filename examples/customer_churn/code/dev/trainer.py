@@ -74,7 +74,8 @@ class SvDklTrainer:
         scheduler = MultiStepLR(self.optimizer,
                             gamma=0.1,
                             milestones=[0.5 * self.hyper_params['epochs'], 0.75 * self.hyper_params['epochs']])
-        
+
+        train_loss = 0.
         for epoch in range(1, self.hyper_params['epochs'] + 1):
             self.model.train()
             self.likelihood.train()
@@ -83,7 +84,6 @@ class SvDklTrainer:
                                                 self.model.gp_layer, 
                                                 num_data=len(data_loader.dataset))
 
-            train_loss = 0.
             for i, (data, target) in enumerate(data_loader):
                 data, target = data.to(self.device), target.to(self.device)
                 self.optimizer.zero_grad()
@@ -93,7 +93,7 @@ class SvDklTrainer:
                 self.optimizer.step()
                 if (i+ 1) % 2 == 0:
                     print('Train Epoch: %d [%03d/%03d], Loss: %.6f' % (epoch, i + 1, len(data_loader), loss.item()))
-                    
+
                     if self.aml_run is not None:
                         self.aml_run.log("loss",loss.item()) 
 
@@ -114,18 +114,18 @@ class SvDklTrainer:
         y_truth_lst = []
 
         with torch.no_grad():
-            for i, (X, y) in enumerate(dataloader):
+            for X, y in dataloader:
                 output = self.likelihood(self.model(X.to(self.device)))
                 y_pred = output.mean.ge(0.5).float().cpu().numpy()
                 y_pred_lst.append(y_pred)
                 y_truth_lst.append(y.numpy())
-            
+
             truth = np.concatenate(y_truth_lst)
             pred =  np.concatenate(y_pred_lst)
-        
+
             auc = roc_auc_score(truth,pred)
             accuracy = accuracy_score(truth,pred)   
-        
+
         print("AUC score: ",round(auc,2))
         print("Accuracy score: ",round(accuracy,2))
 

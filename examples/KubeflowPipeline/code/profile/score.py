@@ -22,12 +22,12 @@ def init():
     model.summary()
     print('Done!')
 
-    print('Initialized model "{}" at {}'.format(model_path, datetime.datetime.now()))
+    print(f'Initialized model "{model_path}" at {datetime.datetime.now()}')
 
 def run(raw_data):
     global model
     prev_time = time.time()
-          
+
     post = json.loads(raw_data)
     img_path = post['image']
 
@@ -45,7 +45,7 @@ def run(raw_data):
         'scores': str(o)
     }
 
-    print('Input ({}), Prediction ({})'.format(post['image'], payload))
+    print(f"Input ({post['image']}), Prediction ({payload})")
 
     return payload
 
@@ -58,9 +58,7 @@ def process_image(path, image_size):
         img = np.array(Image.open(path))
 
     img_tensor = tf.convert_to_tensor(img, dtype=tf.float32)
-    #tf.image.decode_jpeg(img_raw, channels=3)
-    img_final = tf.image.resize(img_tensor, [image_size, image_size]) / 255
-    return img_final
+    return tf.image.resize(img_tensor, [image_size, image_size]) / 255
     
 def info(msg, char = "#", width = 75):
     print("")
@@ -77,7 +75,7 @@ if __name__ == "__main__":
     init()
 
     for k, v in images.items():
-        print('{} => {}'.format(k, v))
+        print(f'{k} => {v}')
 
     info('Taco Test')
     taco = json.dumps({ 'image': images['tacos'] })

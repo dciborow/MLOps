@@ -41,7 +41,7 @@ def softmax(x):
 def run(input_data):
     # preprocess in the right format for the onnx model (numpy array w/ floats)
     input_data = np.array(json.loads(input_data)['data']).astype('int32')
-    
+
     # initialize session, get results from ONNX RT
     input_name = session.get_inputs()[0].name  # get the id of the first input of the model 
     #result = session.run([], {input_name: input_data})
@@ -51,7 +51,4 @@ def run(input_data):
     pred_probs = softmax(output)
     index = np.argmax(output)
 
-    #result = {"label": classes[index], "probability": str(pred_probs[index])}
-    result = {"label": classes[index], "probability": str(max(pred_probs[0][index]))}
-
-    return result
+    return {"label": classes[index], "probability": str(max(pred_probs[0][index]))}

@@ -24,26 +24,31 @@ def tacosandburritos_train(
     profile_name='tacoprofile'
 ):
 
-    operations = {}
     image_size = 160
     training_folder = 'train'
     training_dataset = 'train.txt'
     model_folder = 'model'
 
-    # preprocess data
-    operations['preprocess'] = dsl.ContainerOp(
-        name='preprocess',
-        image='insert your image here',
-        command=['python'],
-        arguments=[
-            '/scripts/data.py',
-            '--base_path', persistent_volume_path,
-            '--data', training_folder,
-            '--target', training_dataset,
-            '--img_size', image_size,
-            '--zipfile', data_download
-        ]
-    )
+    operations = {
+        'preprocess': dsl.ContainerOp(
+            name='preprocess',
+            image='insert your image here',
+            command=['python'],
+            arguments=[
+                '/scripts/data.py',
+                '--base_path',
+                persistent_volume_path,
+                '--data',
+                training_folder,
+                '--target',
+                training_dataset,
+                '--img_size',
+                image_size,
+                '--zipfile',
+                data_download,
+            ],
+        )
+    }
 
     #train
     operations['training'] = dsl.ContainerOp(
@@ -141,5 +146,5 @@ def tacosandburritos_train(
 
 
 if __name__ == '__main__':
-   import kfp.compiler as compiler
-   compiler.Compiler().compile(tacosandburritos_train, __file__ + '.tar.gz')
+    import kfp.compiler as compiler
+    compiler.Compiler().compile(tacosandburritos_train, f'{__file__}.tar.gz')

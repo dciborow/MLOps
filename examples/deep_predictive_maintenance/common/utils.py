@@ -10,9 +10,9 @@ def gen_sequence(id_df, seq_length, seq_cols):
     we can use shorter ones """
     data_array = id_df[seq_cols].values
     num_elements = data_array.shape[0]
-    
-    for start, stop in zip(range(0, num_elements-seq_length), range(seq_length, num_elements)):
-        
+
+    for start, stop in zip(range(num_elements-seq_length), range(seq_length, num_elements)):
+
         yield data_array[start:stop, :]
         
 # function to generate labels

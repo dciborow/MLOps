@@ -35,10 +35,9 @@ target = attritionData["Attrition_numerical"]
 attritionXData = attritionData.drop(['Attrition_numerical', 'Attrition'], axis=1)
 
 # Creating dummy columns for each categorical feature
-categorical = []
-for col, value in attritionXData.iteritems():
-    if value.dtype == 'object':
-        categorical.append(col)
+categorical = [
+    col for col, value in attritionXData.iteritems() if value.dtype == 'object'
+]
 
 # Store the numerical columns in a list numerical
 numerical = attritionXData.columns.difference(categorical)
@@ -46,7 +45,7 @@ numerical = attritionXData.columns.difference(categorical)
 numeric_transformations = [([f], Pipeline(steps=[
     ('imputer', SimpleImputer(strategy='median')),
     ('scaler', StandardScaler())])) for f in numerical]
-    
+
 categorical_transformations = [([f], OneHotEncoder(handle_unknown='ignore', sparse=False)) for f in categorical]
 
 transformations = numeric_transformations + categorical_transformations

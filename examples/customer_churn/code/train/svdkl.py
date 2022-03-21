@@ -141,7 +141,5 @@ class DKLModel(gpytorch.Module):
             features, self.grid_bounds[0], 
             self.grid_bounds[1]
             )
-            
-        res = self.gp_layer(features)
 
-        return res
+        return self.gp_layer(features)
